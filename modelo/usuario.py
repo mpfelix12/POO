@@ -1,6 +1,16 @@
 class Usuario:
- def __init__(self, id=None, nome='', email='', senha=''):
-  self.id = id
-  self.nome = nome
-  self.email = email
-  self.senha = senha
+    def __init__(self, id=None, nome='', email='', senha=''):
+        self.id = id
+        self.nome = nome
+        self.email = email
+        self.senha = senha
+        
+    def __str__(self):
+        return (
+            f"Usuario("
+            f"id={self.id}, "
+            f"nome='{self.nome}', "
+            f"email='{self.email}', "
+            f"senha='{self.senha}'"
+            f")"
+        )

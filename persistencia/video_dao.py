@@ -20,3 +20,17 @@ class VideoDAO:
         if linha:
             return Video(linha[0], linha[1], linha[2], bool(linha[3]), linha[4])
         return None
+    
+    def atualizar(self, video: Video):
+        cursor = self.conexao.cursor()
+        cursor.execute("""
+            UPDATE video
+            SET titulo = ?, url = ?, assistido = ?, quadro_id = ?
+            WHERE id = ?
+        """, (video.titulo, video.url, int(video.assistido), video.quadro_id, video.id))
+        self.conexao.commit()
+        
+    def deletar(self, video_id):
+        cursor = self.conexao.cursor()
+        cursor.execute("DELETE FROM video WHERE id = ?", (video_id,))
+        self.conexao.commit()
