@@ -1,29 +1,28 @@
 import streamlit as st
 
-def tela_quadros():
+def tela_quadro(controller):
     st.title("YTTrack")
     st.subheader("Quadros")
 
-    st.button("➕ Novo Quadro")
+    controller.tela_quadros()
+    
+class QuadroUI:
+    def formulario_cadastro(self, quadros):
+        st.subheader("Cadastrar novo quadro")
 
-    st.markdown("---")
+        titulo = st.text_input("Título do quadro")
+        link = st.text_input("Link do YouTube")
 
-    cores = ["#f87171", "#fde047", "#5eead4", "#ef4444"]
-    cols = st.columns(4)
+        quadro = st.selectbox(
+            "Quadro",
+            quadros,
+            format_func=lambda q: q["nome"]
+        )
 
-    for i, col in enumerate(cols):
-        with col:
-            st.markdown(
-                f"""
-                <div style="
-                    background-color:{cores[i]};
-                    height:140px;
-                    border-radius:10px;
-                    padding:10px;
-                    font-weight:bold;
-                ">
-                    Nome do Quadro
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        if st.button("Salvar vídeo"):
+            return titulo, link, quadro["id"]
+
+        return None, None, None
+
+    def mostrar_mensagem(self, msg):
+        st.success(msg)

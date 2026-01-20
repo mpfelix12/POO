@@ -1,32 +1,28 @@
 import streamlit as st
 
-def tela_videos():
+def tela_videos(controller):
     st.title("YTTrack")
     st.subheader("Vídeos")
 
-    st.selectbox("Quadros", ["Nome do Quadro"])
+    controller.tela_videos()
 
-    st.markdown("### Nome do Quadro")
-    st.markdown("---")
+class VideoUI:
+    def formulario_cadastro(self, quadros):
+        st.subheader("Cadastrar novo vídeo")
 
-    for _ in range(3):
-        col1, col2 = st.columns([4, 1])
+        titulo = st.text_input("Título do vídeo")
+        link = st.text_input("Link do YouTube")
 
-        with col1:
-            st.markdown(
-                """
-                <div style="
-                    background:#e5e7eb;
-                    height:70px;
-                    border-radius:8px;
-                    padding:10px;
-                ">
-                    <strong>Nome do vídeo</strong><br>
-                    <small>Descrição</small>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        quadro = st.selectbox(
+            "Quadro",
+            quadros,
+            format_func=lambda q: q["nome"]
+        )
 
-        with col2:
-            st.checkbox("Marcar como assistido")
+        if st.button("Salvar vídeo"):
+            return titulo, link, quadro["id"]
+
+        return None, None, None
+
+    def mostrar_mensagem(self, msg):
+        st.success(msg)

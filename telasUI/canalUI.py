@@ -1,31 +1,28 @@
 import streamlit as st
 
-def tela_canais():
+def tela_canal(controller):
     st.title("YTTrack")
     st.subheader("Canais")
 
-    st.button("➕ Novo Canal")
+    controller.tela_canais()
+    
+class CanalUI:
+    def formulario_cadastro(self, quadros):
+        st.subheader("Cadastrar novo canal")
 
-    st.markdown("---")
+        titulo = st.text_input("Título do canal")
+        link = st.text_input("Link do YouTube")
 
-    canais = [
-        "Canal 1",
-        "Canal 2",
-        "Canal 3"
-    ]
-
-    for canal in canais:
-        st.markdown(
-            f"""
-            <div style="
-                background:#f3f4f6;
-                border-radius:10px;
-                padding:15px;
-                margin-bottom:10px;
-            ">
-                <strong>{canal}</strong><br>
-                <small>Descrição do canal</small>
-            </div>
-            """,
-            unsafe_allow_html=True
+        quadro = st.selectbox(
+            "Quadro",
+            quadros,
+            format_func=lambda q: q["nome"]
         )
+
+        if st.button("Salvar canal"):
+            return titulo, link, quadro["id"]
+
+        return None, None, None
+
+    def mostrar_mensagem(self, msg):
+        st.success(msg)

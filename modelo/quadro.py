@@ -1,14 +1,26 @@
+from modelo.conexao import conectar
+
 class Quadro:
-    def __init__(self, id=None, nome='', canal_id=None):
-        self.id = id
+    def __init__(self, nome, descricao):
         self.nome = nome
-        self.canal_id = canal_id
-        
-    def __str__(self):
-        return (
-            f"Quadro("
-            f"id={self.id}, "
-            f"nome='{self.nome}', "
-            f"canal_id={self.canal_id}"
-            f")"
+        self.descricao = descricao
+
+    def salvar(self):
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO quadro (nome, descricao) VALUES (?, ?)",
+            (self.nome, self.descricao)
         )
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def listar():
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, nome FROM quadro")
+        dados = cursor.fetchall()
+        conn.close()
+
+        return [{"id": d[0], "nome": d[1]} for d in dados]
