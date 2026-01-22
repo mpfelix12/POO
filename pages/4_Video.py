@@ -1,6 +1,6 @@
 from modelo.video import Video
 from modelo.quadros import Quadro
-from telasUI.videoUI import VideoUI
+from view.videoUI import VideoUI
 
 class TelaVideo:
     def __init__(self):

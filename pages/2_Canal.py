@@ -1,4 +1,4 @@
-from telasUI.canalUI import CanalUI
+from view.canalUI import CanalUI
 from modelo.canal import Canal
 
 class TelaCanal:

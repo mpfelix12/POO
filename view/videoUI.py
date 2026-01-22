@@ -1,4 +1,5 @@
 import streamlit as st
+from persistencia.database import conectar
 from persistencia.video_dao import VideoDAO
 from persistencia.quadro_dao import QuadroDAO
 from modelo.video import Video
@@ -9,7 +10,10 @@ st.markdown("## 📺 YTTrack")
 st.divider()
 st.subheader("Vídeos")
 
-quadro_dao = QuadroDAO()
+if "conexao" not in st.session_state:
+    st.session_state.conexao = conectar()
+
+quadro_dao = QuadroDAO(st.session_state.conexao)
 quadros = quadro_dao.listar()
 
 mapa = {q.nome: q.id for q in quadros}

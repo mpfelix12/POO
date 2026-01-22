@@ -1,5 +1,5 @@
 import streamlit as st
-from telasUI.videoUI import tela_videos
+from view.videoUI import tela_videos
 from view.tela_video import TelaVideo
 
 def menu():

@@ -1,4 +1,4 @@
-from telasUI.quadroUI import QuadroUI
+from view.quadroUI import QuadroUI
 from modelo.quadros import Quadro
 
 class TelaQuadro:
@@ -7,10 +7,10 @@ class TelaQuadro:
 
     def cadastrar_quadro(self):
         nome = self.ui.get_nome()
-        descricao = self.ui.get_descricao()
+        link = self.ui.get_link()
 
-        if nome:
-            Quadro(nome, descricao).salvar()
+        if nome and link:
+            Quadro(nome, link).salvar()
             self.ui.mostrar_mensagem("Quadro salvo no banco com sucesso!")
         else:
-            self.ui.mostrar_mensagem("Nome é obrigatório!")
+            self.ui.mostrar_mensagem("Erro: campos obrigatórios.")
