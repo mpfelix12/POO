@@ -1,28 +1,47 @@
 import streamlit as st
+from persistencia.quadro_dao import QuadroDAO
+from modelo.quadros import Quadro
 
-def tela_quadro(controller):
-    st.title("YTTrack")
-    st.subheader("Quadros")
+st.set_page_config(page_title="YTTrack - Quadros", layout="wide")
 
-    controller.tela_quadros()
-    
-class QuadroUI:
-    def formulario_cadastro(self, quadros):
-        st.subheader("Cadastrar novo quadro")
+st.markdown("## 📺 YTTrack")
+st.divider()
 
-        titulo = st.text_input("Título do quadro")
-        link = st.text_input("Link do YouTube")
+col1, col2 = st.columns([8, 2])
+col1.subheader("Quadros")
 
-        quadro = st.selectbox(
-            "Quadro",
-            quadros,
-            format_func=lambda q: q["nome"]
-        )
+with col2:
+    novo = st.button("Novo Quadro +")
 
-        if st.button("Salvar vídeo"):
-            return titulo, link, quadro["id"]
+dao = QuadroDAO()
 
-        return None, None, None
+if novo:
+    with st.form("novo_quadro"):
+        nome = st.text_input("Nome do Quadro")
+        descricao = st.text_area("Descrição")
+        salvar = st.form_submit_button("Salvar")
 
-    def mostrar_mensagem(self, msg):
-        st.success(msg)
+        if salvar:
+            dao.criar(Quadro(None, nome, descricao))
+            st.success("Quadro criado com sucesso")
+
+quadros = dao.listar()
+
+cores = ["#ff6b6b", "#b6e26d", "#5fd3c6", "#ff3b3b"]
+cols = st.columns(2)
+
+for i, q in enumerate(quadros):
+    with cols[i % 2]:
+        st.markdown(f"""
+        <div style="
+            background:{cores[i % len(cores)]};
+            padding:20px;
+            border-radius:12px;
+            color:white;
+            height:120px;
+            margin-bottom:20px;
+        ">
+            <strong>{q.nome}</strong><br>
+            <small>{q.descricao}</small>
+        </div>
+        """, unsafe_allow_html=True)

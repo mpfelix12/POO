@@ -1,5 +1,5 @@
 from modelo.video import Video
-from modelo.quadro import Quadro
+from modelo.quadros import Quadro
 from telasUI.videoUI import VideoUI
 
 class TelaVideo:

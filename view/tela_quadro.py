@@ -1,5 +1,5 @@
 from telasUI.quadroUI import QuadroUI
-from modelo.quadro import Quadro
+from modelo.quadros import Quadro
 
 class TelaQuadro:
     def __init__(self):

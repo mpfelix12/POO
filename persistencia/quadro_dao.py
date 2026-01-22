@@ -1,4 +1,4 @@
-from modelo.quadro import Quadro
+from modelo.quadros import Quadro
 
 class QuadroDAO:
     def __init__(self, conexao):

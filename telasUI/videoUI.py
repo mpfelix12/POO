@@ -1,28 +1,51 @@
 import streamlit as st
+from persistencia.video_dao import VideoDAO
+from persistencia.quadro_dao import QuadroDAO
+from modelo.video import Video
 
-def tela_videos(controller):
-    st.title("YTTrack")
-    st.subheader("Vídeos")
+st.set_page_config(page_title="YTTrack - Vídeos", layout="wide")
 
-    controller.tela_videos()
+st.markdown("## 📺 YTTrack")
+st.divider()
+st.subheader("Vídeos")
 
-class VideoUI:
-    def formulario_cadastro(self, quadros):
-        st.subheader("Cadastrar novo vídeo")
+quadro_dao = QuadroDAO()
+quadros = quadro_dao.listar()
 
-        titulo = st.text_input("Título do vídeo")
-        link = st.text_input("Link do YouTube")
+mapa = {q.nome: q.id for q in quadros}
+quadro_nome = st.selectbox("Quadros", mapa.keys())
+quadro_id = mapa[quadro_nome]
 
-        quadro = st.selectbox(
-            "Quadro",
-            quadros,
-            format_func=lambda q: q["nome"]
-        )
+# FORMULÁRIO PARA RECEBER LINK DO YOUTUBE
+with st.form("novo_video"):
+    titulo = st.text_input("Nome do vídeo")
+    url = st.text_input("Link do YouTube")
+    salvar = st.form_submit_button("Salvar vídeo")
 
-        if st.button("Salvar vídeo"):
-            return titulo, link, quadro["id"]
+    if salvar:
+        video = Video(None, titulo, url, False, quadro_id)
+        VideoDAO().criar(video)
+        st.success("Vídeo salvo com sucesso")
 
-        return None, None, None
+st.divider()
 
-    def mostrar_mensagem(self, msg):
-        st.success(msg)
+# LISTAGEM DE VÍDEOS
+videos = VideoDAO().listar_por_quadro(quadro_id)
+
+for v in videos:
+    col1, col2 = st.columns([7, 3])
+
+    col1.markdown(f"""
+    <div style="
+        background:#f0f0f0;
+        padding:15px;
+        border-radius:10px;
+    ">
+        <strong>{v.titulo}</strong><br>
+        <a href="{v.url}" target="_blank">{v.url}</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+    assistido = col2.checkbox("Marcar como assistido", value=v.assistido, key=v.id)
+    if assistido != v.assistido:
+        VideoDAO().marcar_assistido(v.id, assistido)
