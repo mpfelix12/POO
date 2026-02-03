@@ -1,17 +1,19 @@
 import streamlit as st
 from persistencia.quadro_dao import QuadroDAO
-from persistencia.database import conectar
 from modelo.quadros import Quadro
 
-# Obter a conexão com o banco de dados
-conn = conectar()
 
 # Passar a conexão para o QuadroDAO
-dao = QuadroDAO(conn)
+dao = QuadroDAO()
 
 class QuadroUI:
-    def __init__(self):
-        self.dao = dao  # Use o QuadroDAO instanciado com a conexão
+    def mostrar(self):
+        st.title("Quadros")
+
+        quadros = dao.listar()
+
+        for q in quadros:
+            st.write(q[1])
 
     def exibir_lista_de_quadros(self):
         quadros = self.dao.listar()

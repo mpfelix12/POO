@@ -11,7 +11,7 @@ conn.close()
 
 for canal in canais:
     st.subheader(canal[1])
-    st.write(canal[2])
+   
 
 if st.session_state.get("usuario") and st.session_state["usuario"][4] == "admin":
     st.divider()

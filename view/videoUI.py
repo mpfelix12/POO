@@ -6,7 +6,7 @@ from modelo.video import Video
 
 st.set_page_config(page_title="YTTrack - Vídeos", layout="wide")
 
-st.markdown("## 📺 YTTrack")
+st.markdown("##  YTTrack")
 st.divider()
 st.subheader("Vídeos")
 

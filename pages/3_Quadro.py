@@ -1,16 +1,69 @@
-from view.quadroUI import QuadroUI
-from modelo.quadros import Quadro
+import streamlit as st
+from persistencia.conexao import conectar
 
-class TelaQuadro:
-    def __init__(self):
-        self.ui = QuadroUI()
+st.title("Quadros")
 
-    def cadastrar_quadro(self):
-        nome = self.ui.get_nome()
-        link = self.ui.get_link()
+# ==========================
+# Selecionar Canal
+# ==========================
+conn = conectar()
+cursor = conn.cursor()
+cursor.execute("SELECT id, nome FROM canal")
+canais = cursor.fetchall()
+conn.close()
 
-        if nome and link:
-            Quadro(nome, link).salvar()
-            self.ui.mostrar_mensagem("Quadro salvo no banco com sucesso!")
+if not canais:
+    st.warning("Nenhum canal cadastrado.")
+    st.stop()
+
+canal_dict = {c[1]: c[0] for c in canais}
+canal_nome = st.selectbox("Selecione o canal", canal_dict.keys())
+canal_id = canal_dict[canal_nome]
+
+# ==========================
+# Listar Quadros do Canal
+# ==========================
+conn = conectar()
+cursor = conn.cursor()
+cursor.execute(
+    "SELECT id, nome FROM quadro WHERE canal_id = ?",
+    (canal_id,)
+)
+
+
+
+quadros = cursor.fetchall()
+conn.close()
+
+st.subheader("Quadros do canal")
+
+if quadros:
+    for quadro in quadros:
+        st.markdown(f"### {quadro[1]}")
+else:
+    st.info("Este canal ainda não possui quadros.")
+
+# ==========================
+# Cadastro de Quadro (Admin)
+# ==========================
+if st.session_state.get("usuario") and st.session_state["usuario"][4] == "admin":
+    st.divider()
+    st.subheader("Cadastrar novo quadro")
+
+    nome_quadro = st.text_input("Nome do quadro")
+
+
+    if st.button("Cadastrar quadro"):
+        if not nome_quadro:
+            st.error("Informe o nome do quadro")
         else:
-            self.ui.mostrar_mensagem("Erro: campos obrigatórios.")
+            conn = conectar()
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO quadro (nome, canal_id) VALUES (?, ?)",
+                (nome_quadro, canal_id)
+            )
+            conn.commit()
+            conn.close()
+            st.success("Quadro cadastrado com sucesso!")
+            st.rerun()

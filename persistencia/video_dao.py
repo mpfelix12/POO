@@ -32,3 +32,22 @@ class VideoDAO:
         )
         conn.commit()
         conn.close()
+
+    def existe_url_no_quadro(self, url, quadro_id):
+        conn = conectar()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT 1 FROM video WHERE url = ? AND quadro_id = ?
+        """, (url, quadro_id))
+
+        existe = cursor.fetchone() is not None
+        conn.close()
+        return existe
+
+    def excluir(self, id_video):
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM video WHERE id = ?", (id_video,))
+        conn.commit()
+        conn.close()

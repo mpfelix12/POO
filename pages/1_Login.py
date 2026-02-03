@@ -1,26 +1,20 @@
 import streamlit as st
 from persistencia.usuario_dao import UsuarioDAO
-from persistencia.database import conectar
+import hashlib
 
-st.title(" Login – YTTrack")
+dao = UsuarioDAO()
 
-conn = conectar()
-dao = UsuarioDAO(conn)
+st.title("Login")
 
-email = st.text_input("E-mail")
+email = st.text_input("Email")
 senha = st.text_input("Senha", type="password")
 
 if st.button("Entrar"):
-    usuario = dao.login(email, senha)
-    if usuario:
-        st.session_state.usuario = {
-            "id": usuario.id_usuario,
-            "nome": usuario.nome,
-            "tipo": usuario.tipo_usuario
-        }
-        st.success("Login realizado!")
-        st.switch_page("pages/2_Canais.py")
-    else:
-        st.error("E-mail ou senha inválidos")
+    senha_hash = hashlib.sha256(senha.encode()).hexdigest()
+    usuario = dao.buscar_por_email_e_senha(email, senha_hash)
 
-conn.close()
+    if usuario:
+        st.session_state["usuario"] = usuario
+        st.success("Login realizado com sucesso")
+    else:
+        st.error("Email ou senha inválidos")

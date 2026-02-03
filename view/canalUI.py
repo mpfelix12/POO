@@ -1,6 +1,16 @@
 import streamlit as st
+from persistencia.canal_dao import canalDAO
+
+dao = canalDAO()
 
 class CanalUI:
+    def mostrar(self):
+        st.title("Canais")
+
+        canais = dao.listar()
+
+        for c in canais:
+            st.write(c[1])
     def __init__(self):
         st.subheader(" Cadastro de Canal")
 

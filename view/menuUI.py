@@ -1,6 +1,7 @@
 import streamlit as st
-from view.videoUI import tela_videos
-from view.tela_video import TelaVideo
+from view.videoUI import TelaVideo
+from view.quadroUI import QuadroUI
+from view.canalUI import CanalUI
 
 def menu():
     st.sidebar.title("Menu")
@@ -11,4 +12,13 @@ def menu():
     )
 
     if opcao == "Vídeos":
-        tela_videos(TelaVideo())
+        tela = TelaVideo()
+        tela.mostrar()
+
+    if opcao == "Quadros":
+        quadro_ui = QuadroUI()
+        quadro_ui.mostrar()
+
+    if opcao == "Canais":
+        canal_ui = CanalUI()
+        canal_ui.mostrar()
