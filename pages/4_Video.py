@@ -29,6 +29,30 @@ quadro_id = quadro_nomes[quadro_nome]
 # 👇 A PARTIR DAQUI ENTRA SEU CÓDIGO
 # ============================
 
+if usuario and usuario[4] == "admin":
+    st.divider()
+
+    if st.button(" Adicionar novo vídeo"):
+        st.session_state["novo_video"] = True
+
+    if st.session_state.get("novo_video"):
+        st.subheader("Novo vídeo")
+
+        titulo = st.text_input("Título do vídeo")
+        url = st.text_input("URL do YouTube")
+
+        if st.button("Salvar vídeo"):
+            if not titulo or not url:
+                st.error("Preencha todos os campos")
+            elif video_dao.existe_url_no_quadro(url, quadro_id):
+                st.error("Este vídeo já existe neste quadro")
+            else:
+                video_dao.inserir(titulo, url, quadro_id)
+                st.success("Vídeo cadastrado com sucesso!")
+                st.session_state["novo_video"] = False
+                st.rerun()
+
+
 videos = video_dao.listar_por_quadro(quadro_id)
 
 for v in videos:
@@ -48,12 +72,6 @@ for v in videos:
             progresso_dao.marcar(id_usuario, id_video)
             st.success("Vídeo marcado como assistido")
 
-    if st.button("Cadastrar vídeo"):
-        if video_dao.existe_url_no_quadro(url, quadro_id):
-            st.error("Este vídeo já existe neste quadro")
-        else:
-            video_dao.inserir(titulo, url, quadro_id)
-            st.success("Vídeo cadastrado")
 
     if usuario and usuario[4] == "admin":
         if st.button("Excluir vídeo", key=f"del_{id_video}"):

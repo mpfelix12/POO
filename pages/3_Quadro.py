@@ -48,22 +48,26 @@ else:
 # ==========================
 if st.session_state.get("usuario") and st.session_state["usuario"][4] == "admin":
     st.divider()
-    st.subheader("Cadastrar novo quadro")
 
-    nome_quadro = st.text_input("Nome do quadro")
+    if st.button("Adicionar novo quadro"):
+        st.session_state["novo_quadro"] = True
 
+    if st.session_state.get("novo_quadro"):
+        st.subheader("Novo quadro")
+        nome_quadro = st.text_input("Nome do quadro")
 
-    if st.button("Cadastrar quadro"):
-        if not nome_quadro:
-            st.error("Informe o nome do quadro")
-        else:
-            conn = conectar()
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO quadro (nome, canal_id) VALUES (?, ?)",
-                (nome_quadro, canal_id)
-            )
-            conn.commit()
-            conn.close()
-            st.success("Quadro cadastrado com sucesso!")
-            st.rerun()
+        if st.button("Salvar quadro"):
+            if not nome_quadro:
+                st.error("Informe o nome do quadro")
+            else:
+                conn = conectar()
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO quadro (nome, canal_id) VALUES (?, ?)",
+                    (nome_quadro, canal_id)
+                )
+                conn.commit()
+                conn.close()
+                st.success("Quadro cadastrado com sucesso!")
+                st.session_state["novo_quadro"] = False
+                st.rerun()
