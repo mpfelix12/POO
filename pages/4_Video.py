@@ -1,16 +1,17 @@
-from modelo.video import Video
-from modelo.quadros import Quadro
-from view.videoUI import VideoUI
+import streamlit as st
+from persistencia.video_dao import VideoDAO
 
-class TelaVideo:
-    def __init__(self):
-        self.ui = VideoUI()
+dao = VideoDAO()
 
-    def tela_videos(self):
-        quadros = Quadro.listar()
+st.title("Vídeos")
 
-        titulo, link, quadro_id = self.ui.formulario_cadastro(quadros)
+quadro_id = st.selectbox("Quadro", quadros_ids)
+videos = dao.listar_por_quadro(quadro_id)
 
-        if titulo and link and quadro_id:
-            Video(titulo, link, quadro_id).salvar()
-            self.ui.mostrar_mensagem("Vídeo cadastrado com sucesso!")
+for v in videos:
+    st.subheader(v[1])
+    st.video(v[2])
+    
+    if st.button(f"Marcar como assistido - {v[1]}"):
+        dao.marcar_concluido(v[0])
+        st.success("Vídeo concluído")

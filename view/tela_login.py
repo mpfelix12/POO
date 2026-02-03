@@ -1,15 +1,26 @@
-class TelaLogin:
-    def login(self):
-        print("=== LOGIN ===")
-        email = input("Email: ")
-        senha = input("Senha: ")
+import streamlit as st
+from persistencia.conexao import conectar
+import hashlib
 
-        if email == "admin@email.com" and senha == "123":
-            print("Login realizado com sucesso!")
-            return True
+def tela_login():
+    st.title("Login")
+
+    email = st.text_input("Email")
+    senha = st.text_input("Senha", type="password")
+
+    if st.button("Entrar"):
+        senha_hash = hashlib.sha256(senha.encode()).hexdigest()
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM usuario WHERE email=? AND senha=?",
+            (email, senha_hash)
+        )
+        usuario = cursor.fetchone()
+        conn.close()
+
+        if usuario:
+            st.session_state["usuario"] = usuario
+            st.success("Login realizado")
         else:
-            print("Login inválido!")
-            return False
-
-    def logout(self):
-        print("Logout realizado.")
+            st.error("Dados inválidos")

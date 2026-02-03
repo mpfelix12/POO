@@ -1,36 +1,34 @@
-from modelo.video import Video
+from persistencia.conexao import conectar
 
 class VideoDAO:
-    def __init__(self, conexao):
-        self.conexao = conexao
 
-    def salvar(self, video: Video):
-        cursor = self.conexao.cursor()
-        cursor.execute("""
-            INSERT INTO video (titulo, url, assistido, quadro_id)
-            VALUES (?, ?, ?, ?)
-        """, (video.titulo, video.url, int(video.assistido), video.quadro_id))
-        self.conexao.commit()
-        return cursor.lastrowid
+    def inserir(self, titulo, url, quadro_id):
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO video (titulo, url, quadro_id) VALUES (?, ?, ?)",
+            (titulo, url, quadro_id)
+        )
+        conn.commit()
+        conn.close()
 
-    def buscar_por_id(self, id):
-        cursor = self.conexao.cursor()
-        cursor.execute("SELECT * FROM video WHERE id = ?", (id,))
-        linha = cursor.fetchone()
-        if linha:
-            return Video(linha[0], linha[1], linha[2], bool(linha[3]), linha[4])
-        return None
-    
-    def atualizar(self, video: Video):
-        cursor = self.conexao.cursor()
-        cursor.execute("""
-            UPDATE video
-            SET titulo = ?, url = ?, assistido = ?, quadro_id = ?
-            WHERE id = ?
-        """, (video.titulo, video.url, int(video.assistido), video.quadro_id, video.id))
-        self.conexao.commit()
-        
-    def deletar(self, video_id):
-        cursor = self.conexao.cursor()
-        cursor.execute("DELETE FROM video WHERE id = ?", (video_id,))
-        self.conexao.commit()
+    def listar_por_quadro(self, quadro_id):
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM video WHERE quadro_id = ?",
+            (quadro_id,)
+        )
+        dados = cursor.fetchall()
+        conn.close()
+        return dados
+
+    def marcar_concluido(self, video_id):
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE video SET assistido = 1 WHERE id = ?",
+            (video_id,)
+        )
+        conn.commit()
+        conn.close()
